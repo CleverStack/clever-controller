@@ -117,8 +117,9 @@ If you want '/example/hello' as a route, you can simply implement helloAction() 
 This is the default way to setup a controller to use actions, by default you can also visit '/example/12' and it will route to the getAction() function in your controller (if it's defined) with `this.req.params.id` set for you to use (the same applies for all http methods, eg PUT/DELETE/POST/GET etc.).
 
 
-### Testing:
+### Testing: 
 
 ```
 npm test
 ```
+[![Build Status](https://travis-ci.org/clevertech/clever-controller.png)](https://travis-ci.org/clevertech/clever-controller)
