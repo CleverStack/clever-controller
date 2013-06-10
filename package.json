@@ -1,6 +1,6 @@
 {
     "name": "clever-controller",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "private": false,
     "scripts": {
         "test": "mocha --require should --reporter spec"
