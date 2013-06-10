@@ -1,6 +1,3 @@
-clever-controller
-=================
-
 NodeJS MVC Style "Controller"
 
 "npm install clever-controller".
