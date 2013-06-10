@@ -1,16 +1,24 @@
 {
-  "name": "clever-controller",
-  "version": "0.9.0",
-  "private": false,
-  "dependencies": {
-    "uberclass": ""
-  },
-  "author": {
-    "name": "Richard Gustin (PilsY)",
-    "email": "richard@clevertech.biz"
-  },
-  "description": "",
-  "keywords": [
-    "controller"
-  ]
+    "name": "clever-controller",
+    "version": "0.9.0",
+    "private": false,
+    "scripts": {
+        "test": "mocha --require should --reporter spec"
+    },
+    "dependencies": {
+        "uberclass": ""
+    },
+    "devDependencies": {
+        "mocha": "*",
+        "should": "*",
+        "sinon": "*"
+    },
+    "author": {
+        "name": "Richard Gustin (PilsY)",
+        "email": "richard@clevertech.biz"
+    },
+    "description": "",
+    "keywords": [
+        "controller"
+    ]
 }
