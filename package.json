@@ -1,5 +1,6 @@
 {
     "name": "clever-controller",
+    "description": "MVC-Controller",
     "version": "0.9.1",
     "private": false,
     "scripts": {
@@ -17,7 +18,6 @@
         "name": "Richard Gustin (PilsY)",
         "email": "richard@clevertech.biz"
     },
-    "description": "",
     "keywords": [
         "controller"
     ]
