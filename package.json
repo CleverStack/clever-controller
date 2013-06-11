@@ -1,6 +1,6 @@
 {
     "name": "clever-controller",
-    "description": "MVC-Controller",
+    "description": "Lightning-fast flexible controller prototype",
     "version": "0.9.1",
     "private": false,
     "scripts": {
