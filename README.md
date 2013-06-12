@@ -1,4 +1,4 @@
-# NodeJS MVC Style Controller  [![Build Status](https://travis-ci.org/clevertech/clever-controller.png)](https://travis-ci.org/clevertech/clever-controller)
+# clever-controller  [![Build Status](https://travis-ci.org/clevertech/clever-controller.png)](https://travis-ci.org/clevertech/clever-controller)
 ## Lightning-fast flexible controller prototype
 The main aim of the controller is to help simplify the most common tasks that you need to do when setting up routes and functions/classes to handle them. 
 
