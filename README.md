@@ -1,8 +1,9 @@
-NodeJS MVC Style "Controller"
+# clever-controller  [![Build Status](https://travis-ci.org/clevertech/clever-controller.png)](https://travis-ci.org/clevertech/clever-controller)
+## Lightning-fast flexible controller prototype
+The main aim of the controller is to help simplify the most common tasks that you need to do when setting up routes and functions/classes to handle them. 
 
-"npm install clever-controller".
-
-The main aim of the controller is to help simplify the most common tasks that you need to do when setting up routes and functions/classes to handle them.
+### Installation:
+It is published in `npm` so a simple `npm install clever-controller` will suffice.
 
 ### Routing:
 
@@ -105,13 +106,13 @@ module.exports = ExampleController = function() {
 
 ### Making Actions:
 
-When doing a 'GET /example' it will route to either listAction() first OR getAction() if listAction is not defined.
+When doing a `GET /example` it will route to either `listAction` first OR `getAction` if listAction is not defined.
 
 If neither are defined, express's `.next()` function will be called allowing it to fall through the controller and move onto any other middleware you may have configured.
 
-If you want '/example/hello' as a route, you can simply implement helloAction() in your controller and it will be automatically routed to it.
+If you want `/example/hello` as a route, you can simply implement `helloAction` in your controller and it will be automatically routed to it.
 
-This is the default way to setup a controller to use actions, by default you can also visit '/example/12' and it will route to the getAction() function in your controller (if it's defined) with `this.req.params.id` set for you to use (the same applies for all http methods, eg PUT/DELETE/POST/GET etc.).
+This is the default way to setup a controller to use actions. By default you can also visit `/example/12` and it will route to the `getAction` function in your controller (if it's defined) with `this.req.params.id` set for you to use (the same applies for all HTTP methods, eg PUT/DELETE/POST/et cetera)
 
 
 ### Testing: 
@@ -119,4 +120,3 @@ This is the default way to setup a controller to use actions, by default you can
 ```
 npm test
 ```
-[![Build Status](https://travis-ci.org/clevertech/clever-controller.png)](https://travis-ci.org/clevertech/clever-controller)
