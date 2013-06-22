@@ -1,24 +1,26 @@
-var should = require('should'),
-    sinon = require('sinon'),
-    ControllerClass = require('./../controller.js');
+var should = require( 'should' )
+  , sinon = require( 'sinon' )
+  , ControllerClass = require( './../controller.js' );
 
 describe('Controller', function () {
-    var Controller,
-        ctrl,
-        objs = [];
+    var Controller
+      , ctrl
+      , objs = [];
 
     beforeEach(function (done) {
         Controller = ControllerClass.extend();
 
         var req = {
-            params: {},
-            method: 'GET'
+              params: {},
+              method: 'GET'
             },
             res = {
                 json: function () {}
             },
-            next = function () {};
-        ctrl = new Controller(req, res, next);
+            next = function () {},
+            action = null;
+
+        ctrl = new Controller(action, req, res, next);
         done();
     });
 
@@ -31,11 +33,12 @@ describe('Controller', function () {
         Controller.newInstance = sinon.spy();
         var req = {},
             res = {},
-            next = {};
+            next = {},
+            action = null;
         route(req, res, next);
         var newInstance = Controller.newInstance;
         Controller.newInstance = save;
-        sinon.assert.calledWith(newInstance, req, res, next);
+        sinon.assert.calledWith(newInstance, action, req, res, next);
       });
     });
   });
@@ -49,7 +52,7 @@ describe('Controller', function () {
           res = {},
           next = function () {};
 
-      var c = new Controller(req, res, next);
+      var c = new Controller(null, req, res, next);
       c.req.should.equal(req);
       c.res.should.equal(res);
       c.next.should.equal(next);
@@ -62,8 +65,9 @@ describe('Controller', function () {
             method: 'GET'
           },
           res = {},
-          next = sinon.spy();
-      var c = new Controller(req, res, next);
+          next = sinon.spy(),
+          action = null;
+      var c = new Controller(action, req, res, next);
       sinon.assert.calledOnce(next);
     });
 
@@ -77,8 +81,9 @@ describe('Controller', function () {
             method: 'GET'
           },
           res = {},
-          next = function () {};
-      var c = new Controller(req, res, next);
+          next = function () {},
+          action = null;
+      var c = new Controller(action, req, res, next);
       c.getAction.calledWith(req, res).should.be.ok;
     });
 
@@ -92,8 +97,9 @@ describe('Controller', function () {
             method: 'GET'
           },
           res = {},
-          next = function () {};
-      var c = new Controller(req, res, next);
+          next = function () {},
+          action = null;
+      var c = new Controller(action, req, res, next);
       c.listAction.calledWith(req, res).should.be.ok;
     });
 
@@ -109,8 +115,25 @@ describe('Controller', function () {
             method: 'GET'
           },
           res = {},
-          next = function () {};
-      var c = new Controller(req, res, next);
+          next = function () {},
+          action = null;
+      var c = new Controller(action, req, res, next);
+      sinon.assert.calledWith(c.removeAction, req, res);
+    });
+
+    it('should call action by the override action passed in to attach()', function () {
+      Controller = Controller.extend({
+        removeAction: sinon.spy()
+      });
+
+      var req = {
+            params: {},
+            method: 'GET'
+          },
+          res = {},
+          next = function () {},
+          action = 'removeAction';
+      var c = new Controller(action, req, res, next);
       sinon.assert.calledWith(c.removeAction, req, res);
     });
 
@@ -126,8 +149,9 @@ describe('Controller', function () {
             method: 'GET'
           },
           res = {},
-          next = function () {};
-      var c = new Controller(req, res, next);
+          next = function () {},
+          action = null;
+      var c = new Controller(action, req, res, next);
       c.action.should.equal('removeAction');
     });
 
@@ -146,8 +170,9 @@ describe('Controller', function () {
             method: 'GET'
           },
           res = {},
-          next = sinon.spy();
-      var c = new Ctrl(req, res, next);
+          next = sinon.spy(),
+          action = null;
+      var c = new Ctrl(action, req, res, next);
       c.removeAction.called.should.be.false;
       next.called.should.be.true;
     });
@@ -164,8 +189,9 @@ describe('Controller', function () {
             method: 'GET'
           },
           res = {},
-          next = sinon.spy();
-      var c = new Ctrl(req, res, next);
+          next = sinon.spy(),
+          action = null;
+      var c = new Ctrl(action, req, res, next);
       c.getAction.called.should.be.false;
       next.called.should.be.true;
     });
