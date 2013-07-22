@@ -5,8 +5,7 @@ var cp = require('child_process'),
 
 function masterMain () {
     var clientProcessCount = 5;
-    var serverProcessCount = 5;
-    var results = [];
+    var serverProcessCount = require('os').cpus().length;
 
     _.times(serverProcessCount, function (idx) {
         cluster.fork();
@@ -16,16 +15,19 @@ function masterMain () {
         var client = cp.fork(__dirname + '/client');
 
         client.on('message', function (result) {
-            results.push(result);
+            cb(null, result);
         });
 
         client.on('exit', function () {
             console.log('Client exited');
-            cb();
         });
     }, finish);
 
-    function finish () {
+    function finish (err, results) {
+        if (err) {
+            console.error(err);
+        }
+
         var result = results.reduce(function (sum, result) {
             return sum + result;
         }, 0) / results.length;
