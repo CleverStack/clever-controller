@@ -15,7 +15,7 @@ async.times(requestCount, function (idx, cb) {
         cb();
     });
 }, function (err) {
-    console.log('Client done');
+    //console.log('Client done');
 
     var elapsed = process.hrtime(start);
     elapsed = (elapsed[0] * 1e9 + elapsed[1]) / 1e9;

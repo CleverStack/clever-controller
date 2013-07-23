@@ -16,5 +16,5 @@ app.all('/example/:action/:id?', ExampleController.attach());
 app.all('/example/?:action?', ExampleController.attach());
 
 app.listen(9999, function () {
-    console.log('Server listening');
+    //console.log('Server listening');
 });

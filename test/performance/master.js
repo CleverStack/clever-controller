@@ -3,9 +3,10 @@ var cp = require('child_process'),
     _ = require('underscore'),
     async = require('async');
 
-function masterMain (module, cb) {
-    var clientProcessCount = 5;
-    var serverProcessCount = require('os').cpus().length;
+function masterMain (options, cb) {
+    var module = options.module;
+    var clientProcessCount = options.clientProcessCount;
+    var serverProcessCount = options.serverProcessCount;
 
     _.times(serverProcessCount, function (idx) {
         var server = cluster.fork();
@@ -23,7 +24,7 @@ function masterMain (module, cb) {
         });
 
         client.on('exit', function () {
-            console.log('Client exited');
+            //console.log('Client exited');
         });
     }, finish);
 
@@ -42,6 +43,18 @@ function masterMain (module, cb) {
     }
 }
 
+function masterMainTwice (options, cb) {
+    masterMain(options, function (err, avg1) {
+        if (err) return cb && cb(err);
+
+        masterMain(options, function (err, avg2) {
+            if (err) return cb && cb(err);
+
+            cb(null, (avg1+avg2)/2, avg1, avg2);
+        });
+    });
+}
+
 if (cluster.isMaster) {
     var jobs = [{
         name: 'clever-controller',
@@ -51,22 +64,48 @@ if (cluster.isMaster) {
         module: './server-express'
     }];
 
-    // double
-    jobs = jobs.concat(jobs);
+    var maxClientProcessCount = 1;
+    var maxServerProcessCount = require('os').cpus().length;
 
     async.forEachSeries(jobs, function (job, cb) {
-        masterMain(job.module, function (err, avg) {
-            if (err) {
-                console.error(err);
-            } else {
-                console.log('%s: avg %d requests per second', job.name, Math.round(1 / avg));
-            }
+        async.timesSeries(maxClientProcessCount, function (clientIdx, cb) {
+            async.timesSeries(maxServerProcessCount, function (serverIdx, cb) {
+                var clientProcessCount = clientIdx + 1;
+                var serverProcessCount = serverIdx + 1;
 
-            cb();
-        });
+                masterMainTwice({
+                    module: job.module,
+                    clientProcessCount: clientProcessCount,
+                    serverProcessCount: serverProcessCount
+                }, function (err, avg, avg1, avg2) {
+                    if (err) {
+                        console.error(err);
+                    }
+                    else {
+                        var diff = Math.abs((1 / avg1) - (1 / avg2));
+                        var flag = '';
+                        if (diff > 100) {
+                            flag = ' *';
+                        }
+
+                        console.log('%s: %d server, %d client processes: avg %d req/second (%d, %d)%s',
+                            job.name,
+                            serverProcessCount,
+                            clientProcessCount,
+                            Math.round(1 / avg),
+                            Math.round(1 / avg1),
+                            Math.round(1 / avg2),
+                            flag);
+                    }
+
+                    cb();
+                });
+            }, cb);
+        }, cb);
+
     }, function (err) {
+        console.error(err);
     });
-
 }
 else {
     process.on('message', function (msg) {

@@ -14,5 +14,5 @@ app.all('/example/?:action?', function (req, res, next) {
 });
 
 app.listen(9999, function () {
-    console.log('Server listening');
+    //console.log('Server listening');
 });
