@@ -26,7 +26,7 @@ We use Express' routing, so be sure to check it out at http://expressjs.com/api.
 
 ```javascript
 module.exports = ExampleController = function() {
-	return (require('./../classes/Controller.js')).extend(
+	return Controller.extend(
 	{
 		// example that returns JSON, available from route '/example/hello'
 		helloAction: function() {
@@ -46,7 +46,7 @@ module.exports = ExampleController = function() {
 ### Defining middleware
 ```javascript
 module.exports = ExampleController = function() {
-	return (require('./../classes/Controller.js')).extend(
+	return Controller.extend(
 	{
 		someMiddleware: function(req, res, next) {
 			res.send({
@@ -69,7 +69,7 @@ module.exports = ExampleController = function() {
 
 ```javascript
 module.exports = ExampleController = function() {
-	return (require('./../classes/Controller.js')).extend(
+	return Controller.extend(
 	{
 		postAction: function() {
 			this.send({
