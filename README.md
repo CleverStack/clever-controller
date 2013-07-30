@@ -115,6 +115,18 @@ If you want `/example/hello` as a route, you can simply implement `helloAction` 
 This is the default way to setup a controller to use actions. By default you can also visit `/example/12` and it will route to the `getAction` function in your controller (if it's defined) with `this.req.params.id` set for you to use (the same applies for all HTTP methods, eg PUT/DELETE/POST/et cetera)
 
 
+### Performance (Tests folder 'performance-tests')
+clever-controller: 1 server, 1 client processes: avg 2742 req/second (2726, 2758)
+clever-controller: 2 server, 1 client processes: avg 2764 req/second (2784, 2745)
+clever-controller: 3 server, 1 client processes: avg 2669 req/second (2671, 2668)
+clever-controller: 4 server, 1 client processes: avg 2676 req/second (2688, 2664)
+clever-controller: 5 server, 1 client processes: avg 2715 req/second (2773, 2661) *
+raw express.js: 1 server, 1 client processes: avg 2766 req/second (2743, 2790)
+raw express.js: 2 server, 1 client processes: avg 2793 req/second (2780, 2807)
+raw express.js: 3 server, 1 client processes: avg 2730 req/second (2743, 2717)
+raw express.js: 4 server, 1 client processes: avg 2710 req/second (2722, 2699)
+raw express.js: 5 server, 1 client processes: avg 2635 req/second (2712, 2562) *
+
 ### Testing: 
 
 ```
