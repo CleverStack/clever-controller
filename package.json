@@ -1,7 +1,7 @@
 {
     "name": "clever-controller",
     "description": "Lightning-fast flexible controller prototype",
-    "version": "0.9.2",
+    "version": "1.0",
     "private": false,
     "scripts": {
         "test": "mocha --require should --reporter spec"
