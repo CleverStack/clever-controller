@@ -117,6 +117,7 @@ This is the default way to setup a controller to use actions. By default you can
 
 ### Performance (Tests folder 'performance-tests')
 ```
+node test/performance/master.js
 clever-controller: 1 server, 1 client processes: avg 2742 req/second (2726, 2758)
 clever-controller: 2 server, 1 client processes: avg 2764 req/second (2784, 2745)
 clever-controller: 3 server, 1 client processes: avg 2669 req/second (2671, 2668)
