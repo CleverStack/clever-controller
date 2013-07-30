@@ -116,6 +116,7 @@ This is the default way to setup a controller to use actions. By default you can
 
 
 ### Performance (Tests folder 'performance-tests')
+```
 clever-controller: 1 server, 1 client processes: avg 2742 req/second (2726, 2758)
 clever-controller: 2 server, 1 client processes: avg 2764 req/second (2784, 2745)
 clever-controller: 3 server, 1 client processes: avg 2669 req/second (2671, 2668)
@@ -126,6 +127,7 @@ raw express.js: 2 server, 1 client processes: avg 2793 req/second (2780, 2807)
 raw express.js: 3 server, 1 client processes: avg 2730 req/second (2743, 2717)
 raw express.js: 4 server, 1 client processes: avg 2710 req/second (2722, 2699)
 raw express.js: 5 server, 1 client processes: avg 2635 req/second (2712, 2562) *
+```
 
 ### Testing: 
 
