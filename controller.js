@@ -1,3 +1,6 @@
+/* jshint node: true */
+'use strict';
+
 var NoActionException = require('./exceptions/NoAction'),
     Class = require('uberclass');
 
@@ -49,7 +52,7 @@ module.exports = Class.extend(
         }
 
         // Route based on an action first if we can
-        if (this.Class.actionsEnabled && typeof this.req.params.action != 'undefined') {
+        if (this.Class.actionsEnabled && typeof this.req.params !== 'undefined' && typeof this.req.params.action !== 'undefined') {
             // Action Defined Routing
             if (isNaN(this.req.params.action)) {
                 funcName = this.req.params.action + 'Action';
@@ -76,7 +79,7 @@ module.exports = Class.extend(
 
         // Route based on the HTTP Method, otherwise throw an exception
         if (this.Class.httpMethodsEnabled) {
-            if (this.isGet() && (this.req.params === undefined || this.req.params.id === undefined) && typeof this.listAction == 'function') {
+            if (this.isGet() && (this.req.params === undefined || this.req.params.id === undefined) && typeof this.listAction === 'function') {
                 method = 'listAction';
             } else {
                 method = this.req.method.toLowerCase() + 'Action';
@@ -129,14 +132,14 @@ module.exports = Class.extend(
     },
 
     isGet: function() {
-        return this.req.method.toLowerCase() == 'get';
+        return this.req.method.toLowerCase() === 'get';
     },
 
     isPost: function() {
-        return this.req.method.toLowerCase() == 'post';
+        return this.req.method.toLowerCase() === 'post';
     },
 
     isPut: function() {
-        return this.req.method.toLowerCase() == 'put';
+        return this.req.method.toLowerCase() === 'put';
     }
 });
