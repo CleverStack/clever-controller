@@ -174,6 +174,25 @@ describe('Controller', function () {
     // it('should set req.params.id from req.params.action if it number');
     // it('should call action by parsing URL');
   });
+    
+  it('should call .action if parses URL with query string', function(){
+    var Ctrl = Controller.extend({
+       actionsEnabled: true
+    },{ 
+      profileAction: sinon.spy()
+    });
+
+    var req = {
+          url: 'http://example.com/search/profile#?param1=value1&param2=value2',
+          method: 'GET'
+        },
+        res = {},
+        next = sinon.spy();
+    var c = new Ctrl(req, res, next);
+    c.profileAction.called.should.be.true;
+    next.called.should.be.false;
+
+  });
 
   describe('.send(content, code, type)', function () {
     it('should call res[type] if type is given', function () {
