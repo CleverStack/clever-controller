@@ -43,6 +43,11 @@ module.exports = Class.extend(
         if (this.Class.actionsEnabled && /\//.test(this.req.url)) {
             var parts = this.req.url.split('/');
             funcName = parts[parts.length-1];
+            
+            if(/\#|\?/.test(funcName)){
+                funcName = funcName.split(/\#|\?/)[0];
+            }
+
             if (isNaN(funcName)) {
                 funcName = funcName + 'Action';
                 if (typeof this[funcName] == 'function') {
