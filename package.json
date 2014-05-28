@@ -6,7 +6,7 @@
     "repository":
     { 
         "type" : "git", 
-        "url" : "http://github.com/clevertech/clever-controller.git"
+        "url" : "http://github.com/CleverStack/clever-controller.git"
     },
     "scripts": {
         "test": "mocha --require should --reporter spec"
