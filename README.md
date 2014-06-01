@@ -1,6 +1,6 @@
 # Clever-Controller
 
-[![Build Status](http://img.shields.io/travis/CleverStack/clever-controller.svg)](https://travis-ci.org/CleverStack/clever-controller) [![Code Climate](http://img.shields.io/codeclimate/github/CleverStack/clever-controller.svg)](https://codeclimate.com/github/CleverStack/clever-controller) [![Dependency Status](https://david-dm.org/CleverStack/clever-controller.svg?theme=shields.io)](https://david-dm.org/CleverStack/clever-controller) [![devDependency Status](https://david-dm.org/CleverStack/clever-controller/dev-status.svg?theme=shields.io)](https://david-dm.org/CleverStack/clever-controller#info=devDependencies)
+[![Build Status](http://img.shields.io/travis/CleverStack/clever-controller.svg)](https://travis-ci.org/CleverStack/clever-controller) [![Code Climate](https://codeclimate.com/github/CleverStack/clever-controller.png)](https://codeclimate.com/github/CleverStack/clever-controller) [![Dependency Status](https://david-dm.org/CleverStack/clever-controller.svg?theme=shields.io)](https://david-dm.org/CleverStack/clever-controller) [![devDependency Status](https://david-dm.org/CleverStack/clever-controller/dev-status.svg?theme=shields.io)](https://david-dm.org/CleverStack/clever-controller#info=devDependencies)
 
 ![CleverStack CLI](http://cleverstack.github.io/assets/img/logos/clevertech-seed-logo-clean.png "CleverStack CLI")
 
