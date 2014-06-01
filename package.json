@@ -1,7 +1,7 @@
 {
     "name": "clever-controller",
     "description": "Lightning-fast flexible controller prototype",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "private": false,
     "repository":
     { 
