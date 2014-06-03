@@ -46,31 +46,41 @@ module.exports = Class.extend(
 
     extend: function() {
         var extendingArgs = [].slice.call( arguments )
-          , stack = new Error().stack.split( '\n' )
-          , stack = stack.splice( 1, stack.length - 1)
-          , extendingFilePath = false
-          , extendingFileName = false
-          , route = null;
+          , autoRouting = ( extendingArgs.length === 2 )
+                ? extendingArgs[ 0 ].autoRouting !== false
+                : false
+          , definedRoute = ( extendingArgs.length === 2 )
+                ? extendingArgs[ 0 ].route !== undefined
+                : false;
 
-        while( stack.length > 0 && extendingFilePath === false ) {
-            var file = stack.shift();
-            if ( !/clever-controller/ig.test( file ) && !/uberclass/ig.test( file ) ) {
-                if ( /\(([^\[\:]+).*\)/ig.test( file ) ) {
-                    extendingFilePath = RegExp.$1;
-                    extendingFileName = path.basename( extendingFilePath ).replace( /(controller)?.js/ig, '' ).toLowerCase();
+        if ( autoRouting && !definedRoute ) {
+            var stack = new Error().stack.split( '\n' )
+              , stack = stack.splice( 1, stack.length - 1)
+              , extendingFilePath = false
+              , extendingFileName = false
+              , route = null;
+            
+            while( stack.length > 0 && extendingFilePath === false ) {
+                var file = stack.shift();
+                if ( !/clever-controller/ig.test( file ) && !/uberclass/ig.test( file ) ) {
+                    if ( /\(([^\[\:]+).*\)/ig.test( file ) ) {
+                        extendingFilePath = RegExp.$1;
+                        extendingFileName = path.basename( extendingFilePath ).replace( /(controller)?.js/ig, '' ).toLowerCase();
+                    }
+                }
+            }
+
+            if ( [ '', 'controller' ].indexOf( extendingFileName ) === -1 && this.route === false ) {
+                route = [ '/', extendingFileName ].join('');
+                // debug( 'Binding automatic route name??' )
+                if ( extendingArgs.length === 2 ) {
+                    extendingArgs[ 0 ].route = route;
+                } else {
+                    extendingArgs.unshift({ route: route  });
                 }
             }
         }
 
-        if ( [ '', 'controller' ].indexOf( extendingFileName ) === -1 && this.route === false ) {
-            route = [ '/', extendingFileName ].join('');
-            // debug( 'Binding automatic route name??' )
-            if ( extendingArgs.length === 2 ) {
-                extendingArgs[ 0 ].route = route;
-            } else {
-                extendingArgs.unshift({ route: route  });
-            }
-        }
         
         return this._super.apply( this, extendingArgs );
     }
