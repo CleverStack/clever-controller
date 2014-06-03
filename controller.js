@@ -7,9 +7,9 @@ var NoActionException = require('./exceptions/NoAction'),
 module.exports = Class.extend(
 /* @Static */
 {
-    actionsEnabled: true,
+    actionRouting: true,
 
-    httpMethodsEnabled: true,
+    restfulRouting: true,
 
     attach: function() {
         return this.callback('newInstance');
@@ -40,7 +40,7 @@ module.exports = Class.extend(
         this.res = res;
 
         // Override routes where you attach specifically to a single route
-        if (this.Class.actionsEnabled && /\//.test(this.req.url)) {
+        if (this.Class.actionRouting && /\//.test(this.req.url)) {
             var parts = this.req.url.split('/');
             funcName = parts[parts.length-1];
             
@@ -57,7 +57,7 @@ module.exports = Class.extend(
         }
 
         // Route based on an action first if we can
-        if (this.Class.actionsEnabled && typeof this.req.params !== 'undefined' && typeof this.req.params.action !== 'undefined') {
+        if (this.Class.actionRouting && typeof this.req.params !== 'undefined' && typeof this.req.params.action !== 'undefined') {
             // Action Defined Routing
             if (isNaN(this.req.params.action)) {
                 funcName = this.req.params.action + 'Action';
@@ -83,7 +83,7 @@ module.exports = Class.extend(
         }
 
         // Route based on the HTTP Method, otherwise throw an exception
-        if (this.Class.httpMethodsEnabled) {
+        if (this.Class.restfulRouting) {
             if (this.isGet() && (this.req.params === undefined || this.req.params.id === undefined) && typeof this.listAction === 'function') {
                 method = 'listAction';
             } else {
