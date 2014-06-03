@@ -1,30 +1,31 @@
 {
-    "name": "clever-controller",
-    "description": "Lightning-fast flexible controller prototype",
-    "version": "1.1.1",
-    "private": false,
-    "repository":
-    { 
-        "type" : "git", 
-        "url" : "http://github.com/CleverStack/clever-controller.git"
-    },
-    "scripts": {
-        "test": "mocha --require should --reporter spec"
-    },
-    "dependencies": {
-        "uberclass": ""
-    },
-    "devDependencies": {
-        "mocha": "*",
-        "should": "*",
-        "sinon": "*"
-    },
-    "author": {
-        "name": "Richard Gustin (PilsY)",
-        "email": "richard@clevertech.biz"
-    },
-    "keywords": [
-        "controller",
-        "cleverstack"
-    ]
+  "name": "clever-controller",
+  "description": "Lightning-fast flexible controller prototype",
+  "version": "1.1.2",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/CleverStack/clever-controller.git"
+  },
+  "scripts": {
+    "test": "mocha --require should --reporter spec"
+  },
+  "dependencies": {
+    "debug": "^0.8.1",
+    "i": "^0.3.2",
+    "uberclass": ""
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*",
+    "sinon": "*"
+  },
+  "author": {
+    "name": "Richard Gustin (PilsY)",
+    "email": "richard@clevertech.biz"
+  },
+  "keywords": [
+    "controller",
+    "cleverstack"
+  ]
 }
