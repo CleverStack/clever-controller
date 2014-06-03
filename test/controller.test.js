@@ -131,9 +131,9 @@ describe('Controller', function () {
       c.action.should.equal('removeAction');
     });
 
-    it('should not call action by req.params.action if .actionsEnabled is false', function () {
+    it('should not call action by req.params.action if .actionRouting is false', function () {
       var Ctrl = Controller.extend({
-        actionsEnabled: false
+        actionRouting: false
       }, {
         getAction: null,
         removeAction: sinon.spy()
@@ -152,9 +152,9 @@ describe('Controller', function () {
       next.called.should.be.true;
     });
 
-    it('should not call action by HTTP method if .httpMethodsEnabled is false', function () {
+    it('should not call action by HTTP method if .restfulRouting is false', function () {
       var Ctrl = Controller.extend({
-        httpMethodsEnabled: false
+        restfulRouting: false
       }, {
         getAction: sinon.spy()
       });
@@ -177,7 +177,7 @@ describe('Controller', function () {
     
   it('should call .action if parses URL with query string', function(){
     var Ctrl = Controller.extend({
-       actionsEnabled: true
+       actionRouting: true
     },{ 
       profileAction: sinon.spy()
     });
