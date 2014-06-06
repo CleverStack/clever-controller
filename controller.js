@@ -171,7 +171,8 @@ module.exports = Class.extend(
         // Route based on an action first if we can
         if ( this.Class.actionRouting && typeof this.req.params !== 'undefined' && typeof this.req.params.action !== 'undefined' ) {
             // Action Defined Routing
-            if ( isNaN( this.req.params.action ) ) {
+            // Updated to consider ObjectId's as numbers for Mongo ids
+            if ( !/^[0-9a-fA-F]{24}$/.test( this.req.params.action ) && isNaN( this.req.params.action ) ) {
                 funcName = this.req.params.action + 'Action';
 
                 if ( typeof this[ funcName ] == 'function' ) {
