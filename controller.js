@@ -98,7 +98,7 @@ module.exports = Class.extend(
             while( stack.length > 0 && extendingFilePath === false ) {
                 var file = stack.shift();
                 if ( !/clever-controller/ig.test( file ) && !/uberclass/ig.test( file ) ) {
-                    if ( /\(([^\[\:]+).*\)/ig.test( file ) ) {
+                    if ( /.*\(([^\)]+)\:.*\:.*\)/ig.test( file ) ) {
                         extendingFilePath = RegExp.$1;
                         extendingFileName = path.basename( extendingFilePath );
                     }
