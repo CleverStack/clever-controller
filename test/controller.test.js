@@ -186,7 +186,7 @@ describe('Controller', function () {
           url: 'http://example.com/search/profile#?param1=value1&param2=value2',
           method: 'GET'
         },
-        res = {},
+        res = { json: sinon.spy() },
         next = sinon.spy();
     var c = new Ctrl(req, res, next);
     c.profileAction.called.should.be.true;

@@ -47,8 +47,8 @@ module.exports = Class.extend(
     },
 
     autoRoute: function( app ) {
-        var middleware = []
-          , routes = this.route.split( '|' )
+        var middleware  = []
+          , routes      = this.route instanceof Array ? this.route : this.route.split( '|' );
         
         debug( 'Autorouting for route ' + routes.join( ', ' ) );
 
@@ -66,33 +66,39 @@ module.exports = Class.extend(
 
         // Bind the actual routes
         routes.forEach(function( route ) {
-            var actionIdRoute = [ route, ':action', ':id?' ].join( '/' )
-              , actionRoute = [ route, ':action?' ].join( '/' );
+            var methods = [ 'GET', 'POST', 'PUT', 'DELETE' ];
 
-            debug( 'Attaching route ' + actionIdRoute );
-            app.all.apply( app, [ actionIdRoute ].concat( middleware ) ); // /example/:action/:id?
-            
-            debug( 'Attaching route ' + actionRoute );
-            app.all.apply( app, [ actionRoute ].concat( middleware ) ); // /example/?:action?
+            debug( 'Attaching route ' + route );
+            if ( /(^[^\/]+)\ ?(\/.*)/ig.test( route ) ) {
+                methods = RegExp.$1;
+                route   = RegExp.$2;
+                methods = methods.match( /\[([^\[\]]+)\]/ig );
+
+                if ( methods.length ) {
+                    methods = methods[ 0 ].replace( /(\[|\])/ig, '' );
+                    methods = methods.split( ',' );
+                }
+            }
+
+            methods.forEach( function( method ) {
+                app[ method.toLowerCase() ].apply( app, [ route ].concat( middleware ) );
+            });
         });
     },
 
     extend: function() {
         var extendingArgs = [].slice.call( arguments )
-          , autoRouting = ( extendingArgs.length === 2 )
-                ? extendingArgs[ 0 ].autoRouting !== false
-                : this.autoRouting
-          , definedRoute = ( extendingArgs.length === 2 )
-                ? extendingArgs[ 0 ].route !== undefined
-                : this.route;
+          , autoRouting = ( extendingArgs.length === 2 ) ? extendingArgs[ 0 ].autoRouting !== false : this.autoRouting
+          , definedRoute = ( extendingArgs.length === 2 ) ? extendingArgs[ 0 ].route !== undefined : this.route;
 
         // Figure out if we are autoRouting and do not have a defined route already
         if ( autoRouting && !definedRoute ) {
             var stack = new Error().stack.split( '\n' )
-              , stack = stack.splice( 1, stack.length - 1 )
               , extendingFilePath = false
               , extendingFileName = false
               , route = null;
+
+            stack = stack.splice( 1, stack.length - 1 );
             
             // Walk backwards over the stack to find the filename where this is defined
             while( stack.length > 0 && extendingFilePath === false ) {
@@ -110,7 +116,13 @@ module.exports = Class.extend(
                 var singular = i.singularize( extendingFileName.replace( /(controller)?.js/ig, '' ).toLowerCase() )
                   , plural = i.pluralize( singular );
 
-                route = [ '/', singular, '|', '/', plural ].join('');
+                route = [];
+                route.push( '/' + singular + '/:id/?' );
+                route.push( '/' + singular + '/:id/:action/?' );
+                route.push( '/' + plural + '/?' );
+                route.push( '/' + plural + '/:action/?' );
+
+                route = route.join( '|' );
 
                 if ( extendingArgs.length === 2 ) {
                     extendingArgs[ 0 ].route = route;
@@ -132,7 +144,11 @@ module.exports = Class.extend(
     resFunc: 'json',
     action: null,
 
-    setup: function(req, res, next) {
+    setup: function( req, res, next ) {
+        this.next = next;
+        this.req  = req;
+        this.res  = res;
+
         try {
             return this.performanceSafeSetup( req, res, next );
         } catch( e ) {
@@ -141,80 +157,48 @@ module.exports = Class.extend(
     },
 
     performanceSafeSetup: function( req, res, next ) {
-        var method = null
-          , funcName = null
-          , parts = null;
+        var methodAction    = req.method.toLowerCase() + 'Action'
+          , actionRouting   = this.Class.actionRouting
+          , actionMethod    = /\/([a-zA-z]+)(\/?|\?.*|\#.*)?$/ig.test( req.url ) ? RegExp.$1 + 'Action' : ( req.params.action !== undefined ? req.params.action : false )
+          , restfulRouting  = this.Class.restfulRouting
+          , idRegex         = /(^[0-9]+$|^[0-9a-fA-F]{24}$)/
+          , hasIdParam      = req.params && req.params.id !== undefined ? true : false
+          , id              = !!hasIdParam && idRegex.test( req.params.id ) ? req.params.id : false
+          , hasActionParam  = req.params && req.params.action !== undefined ? true : false
+          , action          = !!hasActionParam && !idRegex.test( req.params.action ) ? req.params.action + 'Action' : false;
 
-        this.next = next;
-        this.req = req;
-        this.res = res;
+        // console.log( 'methodAction:' + methodAction );
+        // console.log( 'actionMethod:' + actionMethod );
+        // console.log( 'actionRouting:' + actionRouting );
+        // console.log( 'actionMethod:' + actionMethod );
+        // console.log( 'restfulRouting:' + restfulRouting );
+        // console.log( 'hasIdParam:' + hasIdParam );
+        // console.log( 'id:' + id );
+        // console.log( 'hasActionParam:' + hasActionParam );
+        // console.log( 'action:' + action );
 
-        // Override routes where you attach specifically to a single route
-        if ( this.Class.actionRouting && /\//.test( this.req.url ) ) {
-            parts = this.req.url.split( '/' );
-            funcName = parts[ parts.length - 1 ];
-            
-            if(/\#|\?/.test(funcName)){
-                funcName = funcName.split( /\#|\?/ )[ 0 ];
+        if ( !!actionRouting && !!hasActionParam && action !== false && typeof this[ action ] === 'function' ) {
+            debug( 'actionRouting: mapped by url to ' + action );
+            return [ null, action, next ];
+        }
+
+        if ( actionMethod !== false && typeof this[ actionMethod ] === 'function' ) {
+            debug( 'actionRouting: mapped by param to ' + actionMethod );
+            return [ null, actionMethod, next ];
+        }
+
+        if ( !!restfulRouting ) {
+            if ( methodAction === 'getAction' && !id && typeof this.listAction === 'function' ) {
+                methodAction = 'listAction';
             }
 
-            if ( isNaN( funcName ) ) {
-                funcName = funcName + 'Action';
-                if ( typeof this[ funcName ] == 'function' ) {
-                    debug( 'actionRouting mapped to ' + funcName );
-
-                    return [ null, funcName, next ];
-                }
+            if ( typeof this[ methodAction ] === 'function' ) {
+                debug( 'restfulRouting mapped to ' + methodAction );
+                return [ null, methodAction, next ];
             }
         }
 
-        // Route based on an action first if we can
-        if ( this.Class.actionRouting && typeof this.req.params !== 'undefined' && typeof this.req.params.action !== 'undefined' ) {
-            // Action Defined Routing
-            // Updated to consider ObjectId's as numbers for Mongo ids
-            if ( !/^[0-9a-fA-F]{24}$/.test( this.req.params.action ) && isNaN( this.req.params.action ) ) {
-                funcName = this.req.params.action + 'Action';
-
-                if ( typeof this[ funcName ] == 'function' ) {
-                    debug( 'actionRouting mapped to ' + funcName );
-                    return [ null, funcName, next ];
-                } else {
-                    throw new NoActionException();
-                }
-            } else {
-                // HTTP Method Based Routing
-                method = this.req.method.toLowerCase() + 'Action';
-                if ( typeof this[ method ] == 'function' ) {
-                    debug( 'http method route mapped to ' + method );
-
-                    this.req.params.id = this.req.params.action;
-                    delete this.req.params.action;
-
-                    return [ null, method, next ];
-                } else {
-                    throw new NoActionException();
-                }
-            }
-        }
-
-        // Route based on the HTTP Method, otherwise throw an exception
-        if ( this.Class.restfulRouting ) {
-            if ( this.isGet() && ( this.req.params === undefined || this.req.params.id === undefined ) && typeof this.listAction === 'function' ) {
-                method = 'listAction';
-
-                debug( 'restfulRouting mapped to ' + method );
-            } else {
-                method = this.req.method.toLowerCase() + 'Action';
-                if ( typeof this[ method ] != 'function' ) {
-                    throw new NoActionException();
-                }
-
-                debug( 'restfulRouting mapped to ' + method );
-            }
-        }
-
-        // If we got this far without an action but with a method, then route based on that
-        return [ null, method, next ];
+        return [ new NoActionException(), null, next ];
     },
 
     init: function( error, method, next ) {
