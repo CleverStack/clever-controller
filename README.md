@@ -11,8 +11,6 @@ NodeJS Controller for the CleverStack ecosystem, designed to work with or withou
 
 ## Important
 ###### If you are using the CleverStack framework you do not need to install or setup clever-controler, CleverStack comes out of the box with the Controller ready to use.
---
-
 
 ## Installation:
 It is published in `npm` so a simple `npm install clever-controller` will suffice.
@@ -22,16 +20,18 @@ npm i clever-controller
 
 ## About
 
-###### Lightning-fast and flexible controller prototype
+##### Lightning-fast and flexible controller prototype
 
 ### Aim
 The main aim of the controller is to help simplify the most common tasks that you need to do when setting up routes and functions/classes to handle them. 
+
+--
 
 ### Description
 Controllers are the thing that directly responds to each HTTP Request that comes into your application, as such each web request will result in (if routed) a new instance of a Controller (Class).
 
 Avoid callback soup/hell and promise slowdown by using this.proxy() or this.callback() in the Static section of the Controller, this keeps code nesting to a minimum and brings code re-use up.
-```
+```javascript
 // Example, taken from the RoleController inside the clever-roles module
 RoleService
     .list()
@@ -48,10 +48,14 @@ RoleService
     .catch( this.proxy( 'handleException' ) );
 ```
 
+--
+
 ## Features
 
 ### Performance 
 By taking advantage of V8's Hidden Classes, Inline Caches and the Optimizing Compiler (which generates effecient machine code to use in-place of your javascript) your application is blisteringly fast AND easy to use.
+
+--
 
 ### Highlights
 * Lightning fast
@@ -62,10 +66,12 @@ By taking advantage of V8's Hidden Classes, Inline Caches and the Optimizing Com
     * Static inheritance
     * Prototypal inheritance
 * Setup and initialization methods for both Static and Prototype
-* Easy-to-use method proxys with currying ( available as Static.callback() and Prototype.proxy() )
+* Easy-to-use method proxys with currying ( Static.callback() and Prototype.proxy() )
 * Internet Addressable functions, simply add 'Action' to the end of your controllers method() name and it will be Internet Addressable (as long as a route points to that controller).
 * Private functions, any function without 'Action' on the end of its name is NOT Internet Addressable
 * Easy accessors for Request and Response, available as this.req and this.res.
+
+--
 
 ### Routing
 
@@ -74,7 +80,7 @@ By taking advantage of V8's Hidden Classes, Inline Caches and the Optimizing Com
     * Array notation allows (Connect or any other) Middleware to be attached to the routes that are autoRouted
 
 here are some examples:
-```
+```javascript
 {
     // ...
 
@@ -124,6 +130,8 @@ app.use(ExampleController.someMiddleware);
 
 We use Express' routing, so be sure to check it out at http://expressjs.com/api.html#app.VERB
 
+--
+
 ## Making A Controller:
 
 ```javascript
@@ -144,6 +152,8 @@ module.exports = ExampleController = function() {
     });
 };
 ```
+
+--
 
 ## Defining middleware
 ```javascript
@@ -166,6 +176,8 @@ module.exports = ExampleController = function() {
     });
 };
 ```
+
+--
 
 ## RESTful Actions
 
@@ -206,6 +218,8 @@ module.exports = ExampleController = function() {
 };
 ```
 
+--
+
 ## Making Actions:
 
 When doing a `GET /example` it will route to either `listAction` first OR `getAction` if listAction is not defined.
@@ -215,22 +229,25 @@ If neither are defined, express's `.next()` function will be called allowing it 
 If you want `/example/hello` as a route, you can simply implement `helloAction` in your controller and it will be automatically routed to it.
 
 This is the default way to setup a controller to use actions. By default you can also visit `/example/12` and it will route to the `getAction` function in your controller (if it's defined) with `this.req.params.id` set for you to use (the same applies for all HTTP methods, eg PUT/DELETE/POST/et cetera)
-
+--
 
 ## Performance (Tests folder 'performance-tests')
 ```
 node test/performance/master.js
+
 clever-controller: 1 server, 1 client processes: avg 2742 req/second (2726, 2758)
 clever-controller: 2 server, 1 client processes: avg 2764 req/second (2784, 2745)
 clever-controller: 3 server, 1 client processes: avg 2669 req/second (2671, 2668)
 clever-controller: 4 server, 1 client processes: avg 2676 req/second (2688, 2664)
 clever-controller: 5 server, 1 client processes: avg 2715 req/second (2773, 2661) *
-raw express.js: 1 server, 1 client processes: avg 2766 req/second (2743, 2790)
-raw express.js: 2 server, 1 client processes: avg 2793 req/second (2780, 2807)
-raw express.js: 3 server, 1 client processes: avg 2730 req/second (2743, 2717)
-raw express.js: 4 server, 1 client processes: avg 2710 req/second (2722, 2699)
-raw express.js: 5 server, 1 client processes: avg 2635 req/second (2712, 2562) *
+raw express.js:    1 server, 1 client processes: avg 2766 req/second (2743, 2790)
+raw express.js:    2 server, 1 client processes: avg 2793 req/second (2780, 2807)
+raw express.js:    3 server, 1 client processes: avg 2730 req/second (2743, 2717)
+raw express.js:    4 server, 1 client processes: avg 2710 req/second (2722, 2699)
+raw express.js:    5 server, 1 client processes: avg 2635 req/second (2712, 2562) *
 ```
+
+--
 
 ## Testing: 
 
