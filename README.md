@@ -1,27 +1,113 @@
 Clever Controller
 ====================
+###### Lightning-fast and flexible controller prototype
 [![GitHub version](https://badge.fury.io/gh/cleverstack%2Fclever-controller.png)](http://badge.fury.io/gh/cleverstack%2Fclever-controller) [![Dependency Status](https://david-dm.org/CleverStack/clever-controller.png)](https://david-dm.org/CleverStack/clever-controller) [![devDependency Status](https://david-dm.org/CleverStack/clever-controller/dev-status.png)](https://david-dm.org/CleverStack/clever-controller#info=devDependencies) [![Code Climate](https://codeclimate.com/github/CleverStack/clever-controller.png)](https://codeclimate.com/github/CleverStack/clever-controller) 
 [![Build Status](https://secure.travis-ci.org/CleverStack/clever-controller.png?branch=master)](https://travis-ci.org/CleverStack/clever-controller) 
 [![Coverage](https://codeclimate.com/github/CleverStack/clever-controller/coverage.png)](https://codeclimate.com/github/CleverStack/clever-controller) 
 
-![Clever Controller](http://cleverstack.github.io/assets/img/logos/node-seed-logo-clean.png "Clever Controller")
-<blockquote>
-This is the Controller used in the Full-Stack JS Framework CleverStack, however you can use it on its own.
-</blockquote>
+![CleverStack Node Seed](http://cleverstack.github.io/assets/img/logos/node-seed-logo-clean.png "CleverStack Node Seed")
 
-## Lightning-fast flexible controller prototype
+NodeJS Controller for the CleverStack ecosystem, designed to work with or without CleverStack.
+
+
+## Important
+###### If you are using the CleverStack framework you do not need to install or setup clever-controler, CleverStack comes out of the box with the Controller ready to use.
+--
+
+
+## Installation:
+It is published in `npm` so a simple `npm install clever-controller` will suffice.
+```
+npm i clever-controller
+```
+
+## About
+
+### Aim
 The main aim of the controller is to help simplify the most common tasks that you need to do when setting up routes and functions/classes to handle them. 
 
-### Note:
-The documentation is slightly out of date, please refer to the docblocks or make contact with me (richard/pilsy)
+### Description
+Controllers are the thing that directly responds to each HTTP Request that comes into your application, as such each web request will result in (if routed) a new instance of a Controller (Class).
 
-### Installation:
-It is published in `npm` so a simple `npm install clever-controller` will suffice.
+Avoid callback soup/hell and promise slowdown by using this.proxy() or this.callback() in the Static section of the Controller, this keeps code nesting to a minimum and brings code re-use up.
+```
+// Example, taken from the RoleController inside the clever-roles module
+RoleService
+    .list()
+    .then( this.proxy( 'handleServiceMessage' ) )
+    .catch( this.proxy( 'handleException' ) );
 
-### Routing:
+// You can also do
+this.hello = 'YEAH!'; // Only here for demo
+RoleService
+    .list()
+    .then( this.proxy( function( roles ) {
+        console.log( this.hello ); // Will output 'YEAH!'
+    }))
+    .catch( this.proxy( 'handleException' ) );
+```
 
-Controllers by default have autoRouting enabled, this means you get RESTful style routes out of the box, override the route by using route: [ '/some/route' ]
+## Features
 
+### Performance 
+By taking advantage of V8's Hidden Classes, Inline Caches and the Optimizing Compiler (which generates effecient machine code to use in-place of your javascript) your application is blisteringly fast AND easy to use.
+
+### Highlights
+* Lightning fast
+    * V8's Hidden Classes & Inline Caches
+    * V8's Optimizing Compiler which generates efficient machine code to run in place of your javascript
+    * Clean, Efficient and Optimized code
+* Super methods
+    * Static inheritance
+    * Prototypal inheritance
+* Setup and initialization methods for both Static and Prototype
+* Easy-to-use method proxys with currying ( available as Static.callback() and Prototype.proxy() )
+* Internet Addressable functions, simply add 'Action' to the end of your controllers method() name and it will be Internet Addressable (as long as a route points to that controller).
+* Private functions, any function without 'Action' on the end of its name is NOT Internet Addressable
+* Easy accessors for Request and Response, available as this.req and this.res.
+
+### Routing
+
+1. Automatic Routing ( Static.autoRouting )
+    * Ability to turn on or off autoRouting (true or array for ON, false for OFF)
+    * Array notation allows (Connect or any other) Middleware to be attached to the routes that are autoRouted
+
+here are some examples:
+```
+{
+    // ...
+
+    autoRouting: [
+        // As a String (only available for methods on the controllers Static, either inherited or defined)
+        'middlewareFromThisController',
+
+        // Any function
+        function definedFunction( req, res, next ) {
+            // any function (from any file) that takes these three arguments can be attached
+        },
+
+        // CleverStack example
+        PermissionController.requiresPermission({
+            all: 'Example.$action', // optional: ability to define rules based on action (Example.post for POST, etc)
+            postAction: false       // optional: ability to define overrides per action (Overrides must include 'Action')
+        })
+    ],
+
+    middlewareFromThisController: function( req, res, next ) {
+        // Attached inside of autoRouting array
+        next();
+    }
+
+    // ...
+}
+```
+
+2. Route name ( used with autoRouting )
+    * Ability to either define your own route (name), or have it automatically generated based on the filename of your controller! (ExampleController would have a route name of /user and /users )
+
+3. Manual Routing
+
+You can define your own routes like this
 ```javascript
 // Default route setup ~ '/example' or '/example/' or '/example/hello'
 app.all('/example/?:action?', ExampleController.attach())
@@ -37,89 +123,89 @@ app.use(ExampleController.someMiddleware);
 
 We use Express' routing, so be sure to check it out at http://expressjs.com/api.html#app.VERB
 
-### Making A Controller:
+## Making A Controller:
 
 ```javascript
 module.exports = ExampleController = function() {
-	return Controller.extend(
-	{
-		// example that returns JSON, available from route '/example/hello'
-		helloAction: function() {
-			this.send({
-				message: 'Hi there'
-			})
-		},
+    return Controller.extend(
+    {
+        // example that returns JSON, available from route '/example/hello'
+        helloAction: function() {
+            this.send({
+                message: 'Hi there'
+            })
+        },
 
-		// example that renders a view, available from route '/example/view'
-		viewAction: function() {
-			this.render('view.ejs', {});
-		}
-	});
+        // example that renders a view, available from route '/example/view'
+        viewAction: function() {
+            this.render('view.ejs', {});
+        }
+    });
 };
 ```
 
-### Defining middleware
+## Defining middleware
 ```javascript
 module.exports = ExampleController = function() {
-	return Controller.extend(
-	{
-		someMiddleware: function(req, res, next) {
-			res.send({
-				message: 'Hi from middleware!'
-			});
-		}
-	},
-	{
-		// example that returns JSON, available from route '/example/hello'
-		helloAction: function() {
-			this.send({
-				message: 'Hi there'
-			})
-		}
-	});
+    return Controller.extend(
+    {
+        someMiddleware: function(req, res, next) {
+            res.send({
+                message: 'Hi from middleware!'
+            });
+        }
+    },
+    {
+        // example that returns JSON, available from route '/example/hello'
+        helloAction: function() {
+            this.send({
+                message: 'Hi there'
+            })
+        }
+    });
 };
 ```
 
-### RESTful Actions
+## RESTful Actions
 
 ```javascript
 module.exports = ExampleController = function() {
-	return Controller.extend(
-	{
-		postAction: function() {
-			this.send({
-				status: 'Created record!' 
-			});
-		},
+    return Controller.extend(
+    {
+        postAction: function() {
+            this.send({
+                status: 'Created record!' 
+            });
+        },
 
-		listAction: function() {
-			this.send({
-				status: 'Sending you the list of examples.'
-			});
-		},
+        listAction: function() {
+            this.send({
+                status: 'Sending you the list of examples.'
+            });
+        },
 
-		getAction: function() {
-			this.send({
-				status: 'sending you record with id of ' + this.req.params.id
-			});
-		},
+        getAction: function() {
+            this.send({
+                status: 'sending you record with id of ' + this.req.params.id
+            });
+        },
 
-		putAction: function() {
-			this.send({
-				status: 'updated record with id ' + this.req.params.id
-			});
-		},
+        putAction: function() {
+            this.send({
+                status: 'updated record with id ' + this.req.params.id
+            });
+        },
 
-		deleteAction: function() {
-			this.send({
-				status: 'deleted record with id ' + this.req.params.id
-			});
-		}
-	});
+        deleteAction: function() {
+            this.send({
+                status: 'deleted record with id ' + this.req.params.id
+            });
+        }
+    });
 };
 ```
 
-### Making Actions:
+## Making Actions:
 
 When doing a `GET /example` it will route to either `listAction` first OR `getAction` if listAction is not defined.
 
@@ -130,7 +216,7 @@ If you want `/example/hello` as a route, you can simply implement `helloAction` 
 This is the default way to setup a controller to use actions. By default you can also visit `/example/12` and it will route to the `getAction` function in your controller (if it's defined) with `this.req.params.id` set for you to use (the same applies for all HTTP methods, eg PUT/DELETE/POST/et cetera)
 
 
-### Performance (Tests folder 'performance-tests')
+## Performance (Tests folder 'performance-tests')
 ```
 node test/performance/master.js
 clever-controller: 1 server, 1 client processes: avg 2742 req/second (2726, 2758)
@@ -145,7 +231,7 @@ raw express.js: 4 server, 1 client processes: avg 2710 req/second (2722, 2699)
 raw express.js: 5 server, 1 client processes: avg 2635 req/second (2712, 2562) *
 ```
 
-### Testing: 
+## Testing: 
 
 ```
 npm test
