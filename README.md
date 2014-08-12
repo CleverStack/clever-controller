@@ -1,6 +1,5 @@
 Clever Controller
 ====================
-###### Lightning-fast and flexible controller prototype
 [![GitHub version](https://badge.fury.io/gh/cleverstack%2Fclever-controller.png)](http://badge.fury.io/gh/cleverstack%2Fclever-controller) [![Dependency Status](https://david-dm.org/CleverStack/clever-controller.png)](https://david-dm.org/CleverStack/clever-controller) [![devDependency Status](https://david-dm.org/CleverStack/clever-controller/dev-status.png)](https://david-dm.org/CleverStack/clever-controller#info=devDependencies) [![Code Climate](https://codeclimate.com/github/CleverStack/clever-controller.png)](https://codeclimate.com/github/CleverStack/clever-controller) 
 [![Build Status](https://secure.travis-ci.org/CleverStack/clever-controller.png?branch=master)](https://travis-ci.org/CleverStack/clever-controller) 
 [![Coverage](https://codeclimate.com/github/CleverStack/clever-controller/coverage.png)](https://codeclimate.com/github/CleverStack/clever-controller) 
@@ -22,6 +21,8 @@ npm i clever-controller
 ```
 
 ## About
+
+###### Lightning-fast and flexible controller prototype
 
 ### Aim
 The main aim of the controller is to help simplify the most common tasks that you need to do when setting up routes and functions/classes to handle them. 
