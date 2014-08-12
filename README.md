@@ -130,9 +130,9 @@ app.use(ExampleController.someMiddleware);
 
 We use Express' routing, so be sure to check it out at http://expressjs.com/api.html#app.VERB
 
---
+## Usage
 
-## Making A Controller:
+### Making A Controller:
 
 ```javascript
 module.exports = ExampleController = function() {
@@ -155,7 +155,7 @@ module.exports = ExampleController = function() {
 
 --
 
-## Defining middleware
+### Defining middleware
 ```javascript
 module.exports = ExampleController = function() {
     return Controller.extend(
@@ -179,7 +179,7 @@ module.exports = ExampleController = function() {
 
 --
 
-## RESTful Actions
+### RESTful Actions
 
 ```javascript
 module.exports = ExampleController = function() {
@@ -220,7 +220,7 @@ module.exports = ExampleController = function() {
 
 --
 
-## Making Actions:
+### Making Actions:
 
 When doing a `GET /example` it will route to either `listAction` first OR `getAction` if listAction is not defined.
 
@@ -229,7 +229,6 @@ If neither are defined, express's `.next()` function will be called allowing it 
 If you want `/example/hello` as a route, you can simply implement `helloAction` in your controller and it will be automatically routed to it.
 
 This is the default way to setup a controller to use actions. By default you can also visit `/example/12` and it will route to the `getAction` function in your controller (if it's defined) with `this.req.params.id` set for you to use (the same applies for all HTTP methods, eg PUT/DELETE/POST/et cetera)
---
 
 ## Performance (Tests folder 'performance-tests')
 ```
@@ -246,8 +245,6 @@ raw express.js:    3 server, 1 client processes: avg 2730 req/second (2743, 2717
 raw express.js:    4 server, 1 client processes: avg 2710 req/second (2722, 2699)
 raw express.js:    5 server, 1 client processes: avg 2635 req/second (2712, 2562) *
 ```
-
---
 
 ## Testing: 
 
