@@ -1,18 +1,26 @@
-# Clever-Controller
+Clever Controller
+====================
+[![GitHub version](https://badge.fury.io/gh/cleverstack%2Fclever-controller.png)](http://badge.fury.io/gh/cleverstack%2Fclever-controller) [![Dependency Status](https://david-dm.org/CleverStack/clever-controller.png)](https://david-dm.org/CleverStack/clever-controller) [![devDependency Status](https://david-dm.org/CleverStack/clever-controller/dev-status.png)](https://david-dm.org/CleverStack/clever-controller#info=devDependencies) [![Code Climate](https://codeclimate.com/github/CleverStack/clever-controller.png)](https://codeclimate.com/github/CleverStack/clever-controller) 
+[![Build Status](https://secure.travis-ci.org/CleverStack/clever-controller.png?branch=master)](https://travis-ci.org/CleverStack/clever-controller) 
+[![Coverage](https://codeclimate.com/github/CleverStack/clever-controller/coverage.png)](https://codeclimate.com/github/CleverStack/clever-controller) 
 
-[![Build Status](http://img.shields.io/travis/CleverStack/clever-controller.svg)](https://travis-ci.org/CleverStack/clever-controller) [![Code Climate](https://codeclimate.com/github/CleverStack/clever-controller.png)](https://codeclimate.com/github/CleverStack/clever-controller) [![Dependency Status](https://david-dm.org/CleverStack/clever-controller.svg?theme=shields.io)](https://david-dm.org/CleverStack/clever-controller) [![devDependency Status](https://david-dm.org/CleverStack/clever-controller/dev-status.svg?theme=shields.io)](https://david-dm.org/CleverStack/clever-controller#info=devDependencies)
-
-![CleverStack Node Seed](http://cleverstack.github.io/assets/img/logos/node-seed-logo-clean.png "CleverStack Node Seed")
-
-The Controller used for the [CleverStack](http://cleverstack.io) ecosystem. (You can use this module without CleverStack)
+![Clever Controller](http://cleverstack.github.io/assets/img/logos/node-seed-logo-clean.png "Clever Controller")
+<blockquote>
+This is the Controller used in the Full-Stack JS Framework CleverStack, however you can use it on its own.
+</blockquote>
 
 ## Lightning-fast flexible controller prototype
 The main aim of the controller is to help simplify the most common tasks that you need to do when setting up routes and functions/classes to handle them. 
+
+### Note:
+The documentation is slightly out of date, please refer to the docblocks or make contact with me (richard/pilsy)
 
 ### Installation:
 It is published in `npm` so a simple `npm install clever-controller` will suffice.
 
 ### Routing:
+
+Controllers by default have autoRouting enabled, this means you get RESTful style routes out of the box, override the route by using route: [ '/some/route' ]
 
 ```javascript
 // Default route setup ~ '/example' or '/example/' or '/example/hello'

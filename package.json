@@ -1,31 +1,45 @@
 {
-  "name": "clever-controller",
-  "description": "Lightning-fast flexible controller prototype",
-  "version": "1.1.5",
-  "private": false,
+  "name":           "clever-controller",
+  "description":    "Lightning-fast flexible controller prototype",
+  "version":        "1.1.6",
+  "main":           "controller.js",
   "repository": {
-    "type": "git",
-    "url": "http://github.com/CleverStack/clever-controller.git"
+    "type":         "git",
+    "url":          "http://github.com/CleverStack/clever-controller.git"
   },
-  "scripts": {
-    "test": "mocha --require should --reporter spec"
-  },
-  "dependencies": {
-    "debug": "^0.8.1",
-    "i": "^0.3.2",
-    "uberclass": ""
-  },
-  "devDependencies": {
-    "mocha": "*",
-    "should": "*",
-    "sinon": "*"
+  "bugs": {
+    "url":          "https://github.com/CleverStack/clever-controller/issues"
   },
   "author": {
-    "name": "Richard Gustin (PilsY)",
-    "email": "richard@clevertech.biz"
+    "name":         "CleverStack",
+    "email":        "admin@cleverstack.io",
+    "web":          "http://cleverstack.io"
   },
+  "collaborators": [
+    "Richard Gustin <richard.gustin86@gmail.com>"
+  ],
   "keywords": [
     "controller",
-    "cleverstack"
-  ]
+    "cleverstack",
+    "express",
+    "restify",
+    "routing",
+    "api",
+    "actions",
+    "resource"
+  ],
+  "license":        "BSD-2-Clause",
+  "dependencies": {
+    "uberclass":    "",
+    "i":            "^0.3.2",
+    "debug":        "^0.8.1"
+  },
+  "devDependencies": {
+    "mocha":        "*",
+    "should":       "*",
+    "sinon":        "*"
+  },
+  "scripts": {
+    "test":         "mocha --require should --reporter spec"
+  }
 }

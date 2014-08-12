@@ -1,51 +1,124 @@
 /* jshint node: true */
 'use strict';
 
-var NoActionException = require('./exceptions/NoAction')
-  , Class = require( 'uberclass' )
-  , path = require( 'path' )
-  , util = require( 'util' )
-  , i = require( 'i' )()
-  , debug = require( 'debug' )( 'clever-controller' )
-  , routedControllers = [];
+var Class               = require( 'uberclass' )
+  , path                = require( 'path' )
+  , util                = require( 'util' )
+  , i                   = require( 'i' )()
+  , debug               = require( 'debug' )( 'clever-controller' )
+  , NoActionException   = require('./exceptions/NoAction')
+  , routedControllers   = [];
 
-module.exports = Class.extend(
+/**
+ * Clever Controller - lightning-fast flexible controller prototype
+ * 
+ * @define {CleverController} Clever Controller Class
+ * @type {Class}
+ */
+var Controller = Class.extend(
 /* @Static */
 {
+    /**
+     * Defines any (string) route or (array) routes to be used in conjuction with autoRouting
+     *
+     * Note:
+     *     You do not need to provide a value for this, if autoRouting is enabled,
+     *     and you haven't defined a route one will be assigned based on the filename of your Controller.
+     *     
+     * @examples
+     *     route: false
+     *     route: '[POST] /example/:id'
+     *     route: [
+     *         '[POST] /example/?',
+     *         '/example/:id/?',
+     *         '/example/:id/:action/?',
+     *         '/examples/?',
+     *         '/examples/:action/?'
+     *     ]
+     * 
+     * @default false
+     * @type {Boolean|String|Array}
+     */
     route: false,
 
+    /**
+     * Turns autoRouting on when not set to false, and when set to an array provides an
+     * easy way to define middleware for the controller
+     *     
+     * @examples
+     *     autoRouting: false
+     *     autoRouting: [
+     *         function( req, res, next ) {
+     *             // define middleware here
+     *         },
+     *         PermissionController.requiresPermission({
+     *             all: 'Permission.*'
+     *         }),
+     *         'controllerFunction' // Where the controller has a function with this name
+     *     ]
+     * 
+     * @default  true
+     * @type {Boolean|Array}
+     */
     autoRouting: true,
 
+    /**
+     * Turns action based routing on or off
+     * 
+     * @default true
+     * @type {Boolean}
+     */
     actionRouting: true,
 
+    /**
+     * Turns restful method based routing on or off
+     * 
+     * @default true
+     * @type {Boolean}
+     */
     restfulRouting: true,
 
+    /**
+     * Use this function to attach your controller's to routes (either express or restify are supported)
+     * @return {Function} returns constructor function
+     */
     attach: function() {
         return this.callback( 'newInstance' );
     },
 
+    /**
+     * Class (Static) constructor
+     * 
+     * @constructor
+     * @return {undefined}
+     */
     setup: function() {
-        var self = this;
         if ( this.autoRouting !== false && this.route !== false && routedControllers.indexOf( this.route ) === -1 ) {
-            // Do not route multiple times
+
             routedControllers.push( this.route );
             
             if ( typeof this.app !== 'undefined' ) {
-
-                // app has been provided for us in the Static of this Controller so we can attach our routes to it
                 this.autoRoute( this.app );
-
-            } else if ( typeof injector !== 'undefined' ) {
-                
-                // Use the clever-injector to get the express app so we can attach our routes to it
-                injector.inject( function( app ) {
-                    self.autoRoute( app );
-                });
+            } else {
+                try {
+                    var injector = require( 'clever-injector' );
+                    injector.inject( this.callback( function( app ) {
+                        this.autoRoute( app );
+                    }));
+                } catch( e ) {
+                    debug( 'Unable to autoRoute, Controller.app is not defined and clever-injector attempt failed with: ' + e + ( e.stack || ' Without a StackTrace') );
+                }
 
             }
         }
     },
 
+    /**
+     * Attaches controllers routes to the app if autoRouting is enabled and routes have been defined
+     * 
+     * @param  {Object}     app  Either express.app or restify
+     * @return {undefined}
+     */
     autoRoute: function( app ) {
         var middleware  = []
           , routes      = this.route instanceof Array ? this.route : this.route.split( '|' );
@@ -56,12 +129,12 @@ module.exports = Class.extend(
         if ( this.autoRouting instanceof Array ) {
             debug( 'Found middleware for ' + routes.join( ', ' ) + ' - ' + util.inspect( this.autoRouting ).replace( /\n/ig, ' ' )  );
 
-            this.autoRouting.forEach(function( mw ) {
+            this.autoRouting.forEach( this.callback( function( mw ) {
                 middleware.push( typeof mw === 'string' ? this.callback( mw ) : mw );
-            }.bind( this ));
+            }));
         }
 
-        // Add our attach() function
+        // Add our attach() function to handle requests
         middleware.push( this.attach() );
 
         // Bind the actual routes
@@ -86,6 +159,10 @@ module.exports = Class.extend(
         });
     },
 
+    /**
+     * Use this function to create a new controller that extends from Controller
+     * @return {Controller} the newly created controller class
+     */
     extend: function() {
         var extendingArgs = [].slice.call( arguments )
           , autoRouting = ( extendingArgs.length === 2 ) ? extendingArgs[ 0 ].autoRouting !== false : this.autoRouting
@@ -117,6 +194,7 @@ module.exports = Class.extend(
                   , plural = i.pluralize( singular );
 
                 route = [];
+                route.push( '[POST] /' + singular + '/?' )
                 route.push( '/' + singular + '/:id/?' );
                 route.push( '/' + singular + '/:id/:action/?' );
                 route.push( '/' + plural + '/?' );
@@ -138,12 +216,48 @@ module.exports = Class.extend(
 },
 /* @Prototype */
 {
-    req: null,
-    res: null,
-    next: null,
-    resFunc: 'json',
-    action: null,
+    /**
+     * The Request Object
+     * @type {Request}
+     */
+    req:        null,
 
+    /**
+     * The Response Object
+     * @type {Response}
+     */
+    res:        null,
+
+    /**
+     * The next function provided by connect, used to continue past this controller
+     * @type {Function}
+     */
+    next:       null,
+
+    /**
+     * Is set to the most recent action function that was called
+     * @type {String}
+     */
+    action:     null,
+
+    /**
+     * The name of the default Response handler function
+     * 
+     * @default 'json'
+     * @type {String}
+     */
+    resFunc:    'json',
+
+    /**
+     * This will wrap the performanceSafeSetup() function with a try/catch for safety,
+     * most of the actual construction is done inside of Controller.performanceSafeSetup()
+     *     
+     * @constructor
+     * @param  {Request}    req  the Request Object
+     * @param  {Response}   res  the Response Object
+     * @param  {Function}   next connects next() function
+     * @return {Array}           arguments that will be passed to init() to complete the constructor loop
+     */
     setup: function( req, res, next ) {
         this.next = next;
         this.req  = req;
@@ -156,10 +270,19 @@ module.exports = Class.extend(
         }
     },
 
+    /**
+     * This is effectively what would be in setup() but instead lives here outside of the try/catch
+     * so google v8 can optimise the code within
+     * 
+     * @param  {Request}    req  the Request Object
+     * @param  {Response}   res  the Response Object
+     * @param  {Function}   next connects next() function
+     * @return {Array}           arguments that will be passed to init() to complete the constructor loop
+     */
     performanceSafeSetup: function( req, res, next ) {
         var methodAction    = req.method.toLowerCase() + 'Action'
           , actionRouting   = this.Class.actionRouting
-          , actionMethod    = /\/([a-zA-z]+)(\/?|\?.*|\#.*)?$/ig.test( req.url ) ? RegExp.$1 + 'Action' : ( req.params.action !== undefined ? req.params.action : false )
+          , actionMethod    = /\/([a-zA-z\.]+)(\/?|\?.*|\#.*)?$/ig.test( req.url ) ? RegExp.$1 + 'Action' : ( req.params.action !== undefined ? req.params.action : false )
           , restfulRouting  = this.Class.restfulRouting
           , idRegex         = /(^[0-9]+$|^[0-9a-fA-F]{24}$)/
           , hasIdParam      = req.params && req.params.id !== undefined ? true : false
@@ -167,15 +290,15 @@ module.exports = Class.extend(
           , hasActionParam  = req.params && req.params.action !== undefined ? true : false
           , action          = !!hasActionParam && !idRegex.test( req.params.action ) ? req.params.action + 'Action' : false;
 
-        // console.log( 'methodAction:' + methodAction );
-        // console.log( 'actionMethod:' + actionMethod );
-        // console.log( 'actionRouting:' + actionRouting );
-        // console.log( 'actionMethod:' + actionMethod );
-        // console.log( 'restfulRouting:' + restfulRouting );
-        // console.log( 'hasIdParam:' + hasIdParam );
-        // console.log( 'id:' + id );
-        // console.log( 'hasActionParam:' + hasActionParam );
-        // console.log( 'action:' + action );
+        debug( 'methodAction:' + methodAction );
+        debug( 'actionMethod:' + actionMethod );
+        debug( 'actionRouting:' + actionRouting );
+        debug( 'actionMethod:' + actionMethod );
+        debug( 'restfulRouting:' + restfulRouting );
+        debug( 'hasIdParam:' + hasIdParam );
+        debug( 'id:' + id );
+        debug( 'hasActionParam:' + hasActionParam );
+        debug( 'action:' + action );
 
         if ( !!actionRouting && !!hasActionParam && action !== false && typeof this[ action ] === 'function' ) {
             debug( 'actionRouting: mapped by url to ' + action );
@@ -201,15 +324,23 @@ module.exports = Class.extend(
         return [ new NoActionException(), null, next ];
     },
 
+    /**
+     * The final function in the constructor routine, called eventually after setup() has finished
+     * 
+     * @param  {Error}    error  any errors encountered during the setup() portion of the constructor
+     * @param  {String}   method the name of the method to call on this controller
+     * @param  {Function} next   connects next() function
+     * @return {undefined}
+     */
     init: function( error, method, next ) {
         if ( error && error instanceof NoActionException ) {
             debug( 'No route mapping found, calling next()' );
-
-            this.next();
+            next();
         } else {
             try {
-                if ( error )
+                if ( error ) {
                     throw error;
+                }
 
                 if ( method !== null ) {
                     this.action = method;
@@ -240,7 +371,11 @@ module.exports = Class.extend(
     },
 
     handleException: function( exception ) {
-        this.send( { error: 'Unhandled exception: ' + exception, stack: exception.stack }, 500 );
+        this.send({
+            message: 'Unhandled exception: ' + exception,
+            stack: exception.stack ? exception.stack.split( '\n' ) : undefined
+        },
+        exception.statusCode || 500 );
     },
 
     isGet: function() {
@@ -255,3 +390,5 @@ module.exports = Class.extend(
         return this.req.method.toLowerCase() === 'put';
     }
 });
+
+module.exports = Controller;

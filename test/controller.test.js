@@ -230,8 +230,8 @@ describe('Controller', function () {
       var e = new Error('hello');
       ctrl.handleException(e);
       ctrl.send.calledWith({
-        error: 'Unhandled exception: ' + e,
-        stack: e.stack
+        message: 'Unhandled exception: ' + e,
+        stack: e.stack.split( '\n' )
       }, 500).should.be.true;
     });
   });
