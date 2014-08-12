@@ -48,8 +48,6 @@ RoleService
     .catch( this.proxy( 'handleException' ) );
 ```
 
---
-
 ## Features
 
 ### Performance 
@@ -131,6 +129,7 @@ app.use(ExampleController.someMiddleware);
 We use Express' routing, so be sure to check it out at http://expressjs.com/api.html#app.VERB
 
 ## Usage
+Using Controller is easy but if you have any problems (or questions) please raise an issue on github
 
 ### Making A Controller:
 
