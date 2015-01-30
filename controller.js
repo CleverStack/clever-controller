@@ -360,7 +360,7 @@ var Controller = Class.extend(
     send: function( content, code, type ) {
         var toCall = type || this.resFunc;
         if ( code ) {
-            this.res[ toCall ]( code, content );
+            this.res.status( code )[ toCall ]( content );
         } else {
             this.res[ toCall ]( content );
         }
