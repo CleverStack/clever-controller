@@ -259,9 +259,9 @@ var Controller = Class.extend(
      * @return {Array}           arguments that will be passed to init() to complete the constructor loop
      */
     setup: function( req, res, next ) {
-        this.next = next;
-        this.req  = req;
-        this.res  = res;
+        this.next   = next;
+        this.req    = req;
+        this.res    = res;
 
         try {
             return this.performanceSafeSetup( req, res, next );
@@ -346,7 +346,10 @@ var Controller = Class.extend(
                     this.action = method;
 
                     debug( 'calling ' + this.action );
-                    this[ method ]( this.req, this.res );
+                    var promise = this[ method ]( this.req, this.res );
+                    if ( typeof promise === 'object' && typeof promise.then === 'function' ) {
+                        promise.then( this.proxy( 'handleServiceMessage' ) ).catch( this.proxy( 'handleServiceMessage' ) );
+                    }
                 } else {
                     this.next();
                 }
@@ -358,16 +361,23 @@ var Controller = Class.extend(
     },
 
     send: function( content, code, type ) {
-        var toCall = type || this.resFunc;
-        if ( code ) {
-            this.res.status( code )[ toCall ]( content );
-        } else {
-            this.res[ toCall ]( content );
+        if ( !this.responseSent && !this.res.complete ) {
+            this.responseSent = true;
+            var toCall = type || this.resFunc;
+            if ( code ) {
+                this.res.status( code )[ toCall ]( content );
+            } else {
+                this.res[ toCall ]( content );
+            }
         }
     },
 
     render: function( template, data ) {
         this.res.render( template, data );
+    },
+
+    handleServiceMessage: function( exception ) {
+        return this.handleException( exception );
     },
 
     handleException: function( exception ) {
