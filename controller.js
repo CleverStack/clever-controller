@@ -365,7 +365,11 @@ var Controller = Class.extend(
             this.responseSent = true;
             var toCall = type || this.resFunc;
             if ( code ) {
-                this.res.status( code )[ toCall ]( content );
+                if ( typeof this.res.status === 'function' ) {
+                    this.res.status( code )[ toCall ]( content );
+                } else {
+                    this.res[ toCall ]( code, content );
+                }
             } else {
                 this.res[ toCall ]( content );
             }
