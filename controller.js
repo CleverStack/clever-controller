@@ -347,7 +347,7 @@ var Controller = Class.extend(
 
                     debug( 'calling ' + this.action );
                     var promise = this[ method ]( this.req, this.res );
-                    if ( typeof promise === 'object' && typeof promise.then === 'function' ) {
+                    if ( typeof promise === 'object' && typeof promise.then === 'function' && typeof this.proxy === 'function' ) {
                         promise.then( this.proxy( 'handleServiceMessage' ) ).catch( this.proxy( 'handleServiceMessage' ) );
                     }
                 } else {
@@ -365,7 +365,7 @@ var Controller = Class.extend(
             this.responseSent = true;
             var toCall = type || this.resFunc;
             if ( code ) {
-                if ( typeof this.res.status === 'function' ) {
+                if ( undefined !== this.res.status ) {
                     this.res.status( code )[ toCall ]( content );
                 } else {
                     this.res[ toCall ]( code, content );
