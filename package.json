@@ -2,7 +2,7 @@
   "name":           "clever-controller",
   "description":    "Lightning-fast flexible controller prototype",
   "version":        "1.2.0",
-  "main":           "controller.js",
+  "main":           "index.js",
   "repository": {
     "type":         "git",
     "url":          "http://github.com/CleverStack/clever-controller.git"

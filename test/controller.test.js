@@ -1,6 +1,6 @@
 var should = require('should'),
     sinon = require('sinon'),
-    ControllerClass = require('./../controller.js');
+    ControllerClass = require('./../index.js');
 
 describe('Controller', function () {
     var Controller,
