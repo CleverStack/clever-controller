@@ -8,7 +8,8 @@ var UberClass = require('uberclass').extend({
     this.instanceString = instanceString;
   },
   method: inlinePreventedFunction,
-  parentMethod: inlinePreventedFunction
+  parentMethod: inlinePreventedFunction,
+  inlinePreventedMethod: inlinePreventedFunction
 });
 
 var ClassA = UberClass.extend({
