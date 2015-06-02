@@ -1,7 +1,11 @@
-function NoAction(message) {
+function NoAction( message ) {
+  Error.call( this );
+  Error.captureStackTrace( this, this.constructor );
+
+  this.name = this.constructor.name;
   this.message = message;
 }
 
-NoAction.prototype = new Error;
+require( 'util' ).inherits( NoAction, Error );
 
 module.exports = NoAction;

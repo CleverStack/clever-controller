@@ -8,7 +8,7 @@ app.all('/example/:action/:id?', function (req, res, next) {
 });
 
 app.all('/example/?:action?', function (req, res, next) {
-    res.json({
+    res.send({
         status: 'Sending you the list of examples.'
     });
 });

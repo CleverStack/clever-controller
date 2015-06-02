@@ -1,19 +1,20 @@
 var request = require('request'),
-    async = require('async');
+async = require('async');
 
 var requestCount = 10000;
+var separateReqPool = {maxSockets: 20};
 
 var start = process.hrtime();
 
-async.times(requestCount, function (idx, cb) {
-    request('http://localhost:9999/example', function (err, res, body) {
-        if (err) {
-            console.error(err);
-            return;
-        }
+async.times(requestCount, function(idx, cb) {
+  request({url: 'http://localhost:9999/example', pool: separateReqPool}, function (err, res, body) {
+    if (err) {
+      console.error(err);
+      return;
+    }
 
-        cb();
-    });
+    cb();
+  });
 }, function (err) {
     //console.log('Client done');
 
@@ -22,4 +23,4 @@ async.times(requestCount, function (idx, cb) {
 
     process.send(elapsed / requestCount);
     process.exit();
-});
+  });

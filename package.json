@@ -2,7 +2,7 @@
   "name":           "clever-controller",
   "description":    "Lightning-fast flexible controller prototype",
   "version":        "1.2.0",
-  "main":           "controller.js",
+  "main":           "index.js",
   "repository": {
     "type":         "git",
     "url":          "http://github.com/CleverStack/clever-controller.git"
@@ -30,9 +30,12 @@
   ],
   "license":        "BSD-2-Clause",
   "dependencies": {
-    "uberclass":    "",
-    "i":            "^0.3.2",
-    "debug":        "^2.1.1"
+    "clever-injector": "^1.0.3",
+    "clever-class":    "^1.0.0",
+    "babel":           "^5.1.11",
+    "uberclass":       "",
+    "i":               "^0.3.2",
+    "debug":           "^2.1.1"
   },
   "devDependencies": {
     "mocha":        "*",
@@ -40,6 +43,6 @@
     "sinon":        "*"
   },
   "scripts": {
-    "test":         "mocha --require should --reporter spec"
+    "test":         "mocha -b --require should --reporter spec ./test/main.js ./test/controller.test.js"
   }
 }

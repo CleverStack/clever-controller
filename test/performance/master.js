@@ -3,6 +3,10 @@ var cp = require('child_process'),
     _ = require('underscore'),
     async = require('async');
 
+require('babel/register')({
+  stage: 0
+});
+
 function masterMain (options, cb) {
     var module = options.module;
     var clientProcessCount = options.clientProcessCount;
@@ -64,8 +68,8 @@ if (cluster.isMaster) {
         module: './server-express'
     }];
 
-    var maxClientProcessCount = 1;
-    var maxServerProcessCount = require('os').cpus().length;
+    var maxClientProcessCount = 4;
+    var maxServerProcessCount = 2; // require('os').cpus().length;
 
     async.forEachSeries(jobs, function (job, cb) {
         async.timesSeries(maxClientProcessCount, function (clientIdx, cb) {
