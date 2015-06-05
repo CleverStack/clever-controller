@@ -31,7 +31,7 @@
   "license":        "BSD-2-Clause",
   "dependencies": {
     "clever-injector": "^1.0.3",
-    "clever-class":    "^1.0.0",
+    "clever-class":    "https://github.com/CleverStack/clever-class.git",
     "babel":           "^5.1.11",
     "uberclass":       "",
     "i":               "^0.3.2",
