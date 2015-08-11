@@ -190,7 +190,7 @@ var Controller = Class.extend(
 
             // Determine the route names if we have found a file
             if ( [ '', 'controller.js' ].indexOf( extendingFileName.toLowerCase() ) === -1 ) {
-                var singular = i.singularize( extendingFileName.replace( /(controller)?.js/ig, '' ).toLowerCase() )
+                var singular = i.singularize( extendingFileName.replace( /(controller)?.(js|es6)/ig, '' ).toLowerCase() )
                   , plural = i.pluralize( singular );
 
                 route = [];
