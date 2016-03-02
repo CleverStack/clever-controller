@@ -79,6 +79,14 @@ var Controller = Class.extend(
     restfulRouting: true,
 
     /**
+     * Regex used to determine what constitutes a valid 
+     * 
+     * @default true
+     * @type {Boolean}
+     */
+    idRegex: /(^[0-9]+$|^[0-9a-fA-F]{24}$)/,
+
+    /**
      * Use this function to attach your controller's to routes (either express or restify are supported)
      * @return {Function} returns constructor function
      */
@@ -284,7 +292,7 @@ var Controller = Class.extend(
           , actionRouting   = this.Class.actionRouting
           , actionMethod    = /\/([a-zA-z\.]+)(\/?|\?.*|\#.*)?$/ig.test( req.url ) ? RegExp.$1 + 'Action' : ( req.params.action !== undefined ? req.params.action : false )
           , restfulRouting  = this.Class.restfulRouting
-          , idRegex         = /(^[0-9]+$|^[0-9a-fA-F]{24}$)/
+          , idRegex         = this.Class.idRegex
           , hasIdParam      = req.params && req.params.id !== undefined ? true : false
           , id              = !!hasIdParam && idRegex.test( req.params.id ) ? req.params.id : false
           , hasActionParam  = req.params && req.params.action !== undefined ? true : false
