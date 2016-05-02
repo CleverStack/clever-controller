@@ -1,6 +1,6 @@
-var express = require('express');
+var restify = require('restify');
 
-var app = express();
+var app = restify();
 app.use(app.router);
 
 app.all('/example/:action/:id?', function (req, res, next) {

@@ -65,7 +65,7 @@ if (cluster.isMaster) {
     }];
 
     var maxClientProcessCount = 1;
-    var maxServerProcessCount = require('os').cpus().length;
+    var maxServerProcessCount = 2;//require('os').cpus().length;
 
     async.forEachSeries(jobs, function (job, cb) {
         async.timesSeries(maxClientProcessCount, function (clientIdx, cb) {
